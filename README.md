@@ -52,7 +52,7 @@ When it happens every few hours day in and day out, it gets super annoying.
 
 ## 💡 The Solution
 
-Enter auto-aws-sso-login, your new best friend. It will fully automate the process on your behalf. You may remain safely 
+Enter `auto-aws-sso-login`, your new best friend. It will fully automate the process on your behalf. You may remain safely 
 ensconced in your terminal 🖥️, and just observe the browser madness of the AWS SSO login workflow
 play out in front of you.
  
@@ -69,17 +69,17 @@ Alright let's make it happen...
 
 Go to [Tampermonkey.net](https://www.tampermonkey.net/) and follow the instructions to install the browser extension.
 
-### Step 2: Install the auto-aws-sso-login script 📜
+### Step 2: Install the auto_aws_sso_login.js script 📜
 
 With Tampermonkey installed, adding the auto-aws-sso-login script is a breeze:
 
-Copy the [auto_aws_sso_login.js](auto_aws_sso_login.js) user script
-Click on the Tampermonkey icon in your browser, and select “Create a new script...”
-Delete any content in the new script template.
-Paste the copied auto-aws-sso-login script.
-Feel free to make any modifications you like
-Save the script by clicking File > Save or pressing Cmd/Ctrl + S.
-Voilà! You're all set.
+- Copy the [auto_aws_sso_login.js](auto_aws_sso_login.js) user script
+- Click on the Tampermonkey icon in your browser, and select “Create a new script...”
+- Delete any content in the new script template.
+- Paste the copied auto-aws-sso-login script.
+- Feel free to make any modifications you like
+- Save the script by clicking File > Save or pressing Cmd/Ctrl + S.
+- Voilà! You're all set.
 
 Step 3: Let's close that last tab 🍏
 
