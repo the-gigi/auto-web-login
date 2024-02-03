@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>auto-aws-ssco-login</string>
+    <string>auto-aws-sso-login</string>
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/osascript</string>

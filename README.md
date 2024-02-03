@@ -24,7 +24,7 @@ the cold and unforgiving world of the browser. First, you are presented with a p
 ![](images/page1.png)
 
 You are expected to go back to your terminal and compare the code on the screen with the code displayed in your 
-terminal, then swith back to the browser and click the button:
+terminal, then switch back to the browser and click the button:
 
 ![](images/terminal_message.png)
 
@@ -92,7 +92,7 @@ wreak havoc on the user experience.
 Anyway, if we can't close the tab from inside the browser, let's close it from outside the browser. I'm on a Mac,
 so I'll use AppleScript. 
 
-The code is here [CloseRequestauthorizedTab.applescript](CloseRequestauthorizedTab.applescript).
+The code is here [CloseRequest authorizedTab.applescript](CloseRequestAuthorizedTab.applescript).
 It checks if the active tab of Chrome (change it if you use a different browser) shows the beloved/dreaded
 "Request authorized" page and closes it. It keeps running forever, monitoring your browser and closing these pages
 as soon as it sees them. Whenever it closes a tab, it also does a solid for you and activates the iTerm2 window,
