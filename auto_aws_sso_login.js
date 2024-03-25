@@ -12,14 +12,32 @@
 (function() {
     'use strict';
 
-    window.addEventListener('load', function() {
-        console.log('auto-aws-sso-login is here!');
+    var attempt = 0;
+    var maxAttempts = 5; // Maximum number of attempts to find and click the button
+
+    function tryClickButton() {
+        attempt++;
+        if (attempt > maxAttempts) {
+            console.log('Max attempts reached. Stopping.');
+            return;
+        }
+
+        console.log('Attempt:', attempt);
+        var buttonFound = false;
         var buttonIds = ['cli_verification_btn', 'cli_login_button'];
         buttonIds.forEach(function(buttonId) {
             var button = document.getElementById(buttonId);
             if (button) {
                 button.click();
+                buttonFound = true;
             }
         });
-    });
+
+        if (!buttonFound) {
+            console.log('No button found, trying again in 1 second...');
+            setTimeout(tryClickButton, 1000); // Wait for 1 second before trying again
+        }
+    }
+
+    window.addEventListener('load', tryClickButton);
 })();
