@@ -78,13 +78,13 @@ browser extension.
 
 ### Step 2: Install the auto_web_login.js script 📜
 
-With Tampermonkey installed, adding the auto-aws-sso-login script is a breeze:
+With Tampermonkey installed, adding our script as a `auto-web-login` tampermonkey script is a
+breeze:
 
 - Copy the [auto_web_login.js](auto_web_login.js) user script
 - Click on the Tampermonkey icon in your browser, and select “Create a new script...”
 - Delete any content in the new script template.
-- Paste the copy auto-web-login script.
-- Feel free to make any modifications you like
+- Paste the content of the clipboard and save the script (as `auto-web-login`).
 - Save the script by clicking File > Save or pressing Cmd/Ctrl + S.
 - Voilà! You're all set.
 
@@ -100,29 +100,27 @@ I'm on a Mac, so I'll use AppleScript. This will require executing some Javascri
 from Applescript. In order to do that you need to tell Chrome it's fine to let AppleScript run some
 Javascript. In the menu ber go to `View > Developer` and click `Allow JavaScript from Apple Events`
 
-
-The code is here [CloseRequest authorizedTab.applescript](CloseRequestAuthorizedTab.applescript).
-It checks if the active tab of Chrome (change it if you use a different browser) shows the
-beloved/dreaded "Request authorized" page and closes it. It keeps running forever, monitoring your
-browser and closing these pages as soon as it sees them. Whenever it closes a tab, it also does a
-solid for you and activates the iTerm2 window, so you can keep doing what you love with no
-interruptions. How cool is that? 😎
+The code is here [CloseTabs.applescript](CloseTabs.applescript). The script checks if the active tab
+of Chrome (change it if you use a different browser) shows the beloved/dreaded "Request authorized"
+page and closes it. It keeps running forever, monitoring your browser and closing these tabs as
+soon as it sees them. Whenever it closes a tab, it also does a solid for you and activates the
+iTerm2 window, so you can keep doing what you love with no interruptions. How cool is that? 😎
 
 We need this script running right from the get go. We can use Launchd to make sure it starts
 whenever your computer starts and runs on your behalf (AKA Agent 😺). But, before we do that let's
 compile our AppleScript:
 
 ```
-$ osacompile -o CloseRequestauthorizedTab.scpt CloseRequestauthorizedTab.applescript
+$ osacompile -o CloseTabs.scpt CloseTabs.applescript
 ```
 
 Alright. we got ou compiled script, and we have
-Launched [auto_aws_sso_login.plist](auto_aws_sso_login.plist) file.
+Launched [auto_web_login.plist](auto_web_login.plist) file.
 All we need to bring this masterpiece to a glorious end is to drop the file
 into `~/Library/LaunchAgents`
 
 ```
-$ cp auto_aws_sso_login.plist ~/Library/LaunchAgents
+$ cp auto_web_login.plist ~/Library/LaunchAgents
 ```
 
 The End! Or is it?
@@ -130,36 +128,26 @@ The End! Or is it?
 ## Bonus Tip!
 
 Often you need to be logged in to AWS when running tests or starting local programs that need to
-access AWS.
-Let's automate one last thing... the need to type `aws sso login`. What if any program that needs
-AWS access
-could get it automatically even if currently you're logged out?
+access AWS. Let's automate one last thing... the need to type `aws sso login`. What if any program
+that needs AWS access could get it automatically even if currently you're logged out?
 
 Well, it would be magical of course ✨. Keep reading and your fingers will never utter the
 words`aws sso login` again...
 
 Suppose you often need to run `some-program-that-needs-aws-access`, which apparently needs AWS
-access.
-
-First, add the following incantation to your shell profile:
+access. First, add the following incantation to your shell profile:
 
 ```
 alias ensure-aws-sso='aws sts get-caller-identity > /dev/null 2>&1 || aws sso login'
 ```
 
 It checks if you are logged in to AWS and if not runs `aws sso login` for you. Now, all you have to
-do
-is stick `ensure-aws-sso` before any command that may require AWS access. For example, to run our
-program we can create
-an alias with the super friendly
+do is stick `ensure-aws-sso` before any command that may require AWS access. For example, to run our
+program we can create an alias with the super friendly:
 name `alias sptnaa='ensure-aws-sso; some-program-that-needs-aws-access'`.
 
 From now on when you want to run `some-program-that-needs-aws-access` you type the much shorter and
-easy to remember
-`sptnaa` and you can rest assured that the program will start only once you're logged in to AWS
-weather or not you
-were logged in to AWS before.
+easy to remember `sptnaa` and you can rest assured that the program will start only once you're logged in to AWS
+weather or not you were logged in to AWS before.
 
 The Real End! 🎉
-
-

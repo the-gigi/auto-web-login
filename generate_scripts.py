@@ -125,7 +125,7 @@ def main():
     apple_script = generate_applescript()
 
     open('auto_web_login.js', 'w').write(tampermonkey_script)
-    open('close_tabs.applescript', 'w').write(apple_script)
+    open('CloseTabs.applescript', 'w').write(apple_script)
 
 
 if __name__ == '__main__':
