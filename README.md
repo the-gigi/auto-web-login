@@ -152,4 +152,4 @@ easy to remember `sptnaa` and you can rest assured that the program will start o
 logged in to AWS
 weather or not you were logged in to AWS before.
 
-The Real End! 🎉
+The Real End! 🎉.
