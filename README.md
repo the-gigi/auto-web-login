@@ -6,44 +6,39 @@ shareholders value in your terminal, and suddenly out of the blue you get an upl
 
 ```
 SSOProviderInvalidToken: the SSO session has expired or is invalid
-caused by: open /Users/gigi/.aws/sso/cache/85cc3da909953f9c5f8508452a2f72e7a5af08bb.json: no such file or directory
+caused by: open /Users/gigi/.aws/sso/cache/85cc3da909953f9c5f8508452a2f72e7a5af08bb.json: 
+no such file or directory
 ```
 
 😱 Ahhhhhhh! What's going on?
 
-Well, if you're an old hand at this game you know that your AWS SSO session has expired and you "
-just" have to type:
+Well, if you're an old hand at this game you know that your AWS SSO session has expired and you
+just have to type:
 
 ```
 aws sso login
 ```
 
-Let me tell you something... whenever someone tells me "You just have to..." I know I'm in trouble.
-This is no exception.
-
-Now, the horror begins... 👿 you are all of a sudden yanked from your cozy terminal into
+Let me tell you something... whenever I hear "You just have to..." I know I'm in trouble. This is no
+exception. Now, the horror begins... 👿 you are all of a sudden yanked from your cozy terminal into
 the cold and unforgiving world of the browser. First, you are presented with a page like
 
 ![](images/page1.png)
 
 You are expected to go back to your terminal and compare the code on the screen with the code
-displayed in your
-terminal, then switch back to the browser and click the button:
+displayed in your terminal, then switch back to the browser and click the button:
 
 ![](images/terminal_message.png)
 
 I have a very high confidence that after doing that once ot twice, at least 100% of the people just
-click the button
-without taking a second look at the code in their terminal.
-Clicking the button just brings more misery in the form of another page (which takes a few seconds
-to load) and
-yet another button to click.
+click the button without taking a second look at the code in their terminal. Clicking the button
+just brings more misery in the form of another page (which takes a few seconds to load) and yet
+another button to click.
 
 ![](images/page2.png)
 
-OK. You know the drill by now, and you obediently click the button. This brings the cheerful "
-Request approved" page
-with a nice green check mark ✅.
+OK. You know the drill by now, and you obediently click the button. This brings the very cheerful 
+"Request approved" page with a nice green check mark ✅.
 
 ![](images/request_approved.png)
 
@@ -58,10 +53,9 @@ dislike. When it happens every few hours day in and day out, it gets super annoy
 
 ## 💡 The Solution
 
-Enter `auto-aws-sso-login`, your new best friend. It will fully automate the process on your behalf.
-You may remain safely
-ensconced in your terminal 🖥️, and just observe the browser madness of the AWS SSO login workflow
-play out in front of you.
+Enter `auto-web-login`, your new best friend. It will fully automate the process on your behalf.
+You may remain safely ensconced in your terminal 🖥️, and just observe the browser madness of the AWS
+SSO login workflow play out in front of you.
 
 The solution is an amalgam of several tools:
 

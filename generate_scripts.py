@@ -5,11 +5,102 @@
 import json
 from pprint import pprint
 from datetime import datetime
+from typing import Dict, Mapping
 
 from config import (
     url_buttons_dict,
     url_query_dict
 )
+
+
+def generate_all_pattern_handling_code(mapping: Mapping):
+    """
+    The format of all pattern handling code is:
+
+    <pattern handling code>
+    <pattern handling code>
+    ...
+    <pattern handling code>
+
+    Need to change wildcard form the mapping (*) to regex wildcard (.*)
+
+    Example:
+
+    regex = new RegExp("https://device.sso..*.amazonaws.com/.*");
+    if (regex.test(currentUrl)) {
+        button = document.getElementById("cli_verification_btn");
+        if (handleButton(button)) {
+            return;
+        }
+    }
+
+    regex = new RegExp("https://d-.*.awsapps.com/start/.*");
+    if (regex.test(currentUrl)) {
+        button = document.getElementById("cli_login_button");
+        if (handleButton(button)) {
+            return;
+        }
+    }
+    """
+    return "".join(generate_pattern_handling_code(p.replace("*", ".*"), q)
+                   for p, q in mapping.items()).lstrip()
+
+
+def generate_pattern_handling_code(pattern, queries):
+    """
+    The format of a pattern handling code is:
+
+    regex = new RegExp("<pattern>");
+    if (regex.test(currentUrl)) {{
+        <button handling code>
+        <button handling code>
+        ...
+        <button handling code>
+    }}
+
+    Example:
+
+    regex = new RegExp("https://device.sso..*.amazonaws.com/.*");
+    if (regex.test(currentUrl)) {{
+        button = document.getElementById("cli_verification_btn");
+        if (handleButton(button)) {{
+            return;
+        }}
+    }}
+
+    """
+
+    buttons = "\n".join(generate_button_handling_code(query) for query in queries)
+    return f"""
+    regex = new RegExp("{pattern}");
+    if (regex.test(currentUrl)) {{
+        {buttons.lstrip()}
+    }}    
+    """
+
+
+def generate_button_handling_code(query):
+    """
+    The format of a pattern handling code is:
+
+    button = <query>;
+    if (handleButton(button)) {{
+        return;
+    }}
+
+    Example:
+
+    button = document.getElementById("cli_verification_btn");
+    if (handleButton(button)) {{
+        return;
+    }}
+    """
+    return f"""
+        button = {query};
+        if (handleButton(button)) {{
+            return;
+        }}
+    """[1:].rstrip()
 
 
 def generate_tampermonkey_script():
@@ -18,11 +109,9 @@ def generate_tampermonkey_script():
 
     # Generate the @include lines and URL-to-buttons mapping for the script
     includes = "\n".join([f"// @include      {pattern}" for pattern in url_buttons_dict])
-    mappings = json.dumps(url_buttons_dict, indent=12)
-    # convert * wildcards to .* for regex
-    mappings = mappings.replace("*", ".*")
-    # adjust the indent on the last curly brace
-    mappings = mappings[:-1] + ' ' * 8 + '}'
+    generated_code = generate_all_pattern_handling_code(url_buttons_dict)
+    # Indent 4 more spaces
+    generated_code = generated_code.replace("\n", "\n    ").rstrip()
 
     script = f"""// ==UserScript==
 // @name         auto-web-login
@@ -40,6 +129,15 @@ def generate_tampermonkey_script():
     var maxAttempts = 5;
     var attempt = 0;
 
+    function handleButton(button) {{
+        if (!button) {{
+            return false;
+        }}
+        console.log('Found and clicked button');
+        button.click();
+        return true;
+    }}
+
     function tryClickButtons() {{
         if (attempt >= maxAttempts) {{
             console.log("Max attempts reached. Stopping.");
@@ -47,41 +145,29 @@ def generate_tampermonkey_script():
         }}
         attempt++;
         console.log("Attempt:", attempt);
-
-        var urlButtonMappings = {mappings};
         var currentUrl = window.location.href;
-
         var buttonClicked = false;
-        Object.keys(urlButtonMappings).forEach(function(pattern) {{
-            var regex = new RegExp(pattern);
-            if (regex.test(currentUrl)) {{
-                var buttonIds = urlButtonMappings[pattern];
-                buttonIds.forEach(function(buttonId) {{
-                    console.log('Trying button id: ' + buttonId);
-                    var button = document.getElementById(buttonId);
-                    if (button) {{
-                        console.log('Found and clicked button id: ' + buttonId);
-                        button.click();
-                        buttonClicked = true;
-                    }}
-                }});
-            }}
-        }});
-
-        if (!buttonClicked) {{
-            console.log("No button found, trying again in 1 second...");
-            setTimeout(tryClickButtons, 1000); // Wait for 1 second before trying again
-        }}
+        var regex = null;
+        var button = null;
+        
+        {generated_code} 
+               
+        console.log("No button found, trying again in 1 second...");
+        setTimeout(tryClickButtons, 1000); // Wait for 1 second before trying again        
     }}
 
     window.addEventListener('load', tryClickButtons);
-}})();"""
-    return script
+}})();
+"""
+    lines = script.split("\n")
+    lines = [line.rstrip() for line in lines]
+    return "\n".join(lines)
 
 
 def generate_applescript():
     # Convert final_page_url_query_dict into an AppleScript list dictionary
-    url_query_pairs = "{" + ", ".join([f'{{"{k}", "{v}"}}' for k, v in url_query_dict.items()]) + "}"
+    url_query_pairs = "{" + ", ".join(
+        [f'{{"{k}", "{v}"}}' for k, v in url_query_dict.items()]) + "}"
 
     # AppleScript template with placeholders
     script = f"""
@@ -117,7 +203,9 @@ repeat
     delay 1 -- Delays for 1 second before the next iteration
 end repeat
 """
-    return script
+    lines = script.split("\n")
+    lines = [line.rstrip() for line in lines]
+    return "\n".join(lines)
 
 
 def main():

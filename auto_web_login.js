@@ -15,6 +15,15 @@
     var maxAttempts = 5;
     var attempt = 0;
 
+    function handleButton(button) {
+        if (!button) {
+            return false;
+        }
+        console.log('Found and clicked button');
+        button.click();
+        return true;
+    }
+
     function tryClickButtons() {
         if (attempt >= maxAttempts) {
             console.log("Max attempts reached. Stopping.");
@@ -22,38 +31,29 @@
         }
         attempt++;
         console.log("Attempt:", attempt);
-
-        var urlButtonMappings = {
-            "https://device.sso..*.amazonaws.com/.*": [
-                        "cli_verification_btn"
-            ],
-            "https://d-.*.awsapps.com/start/.*": [
-                        "cli_login_button"
-            ]
-        };
         var currentUrl = window.location.href;
-
         var buttonClicked = false;
-        Object.keys(urlButtonMappings).forEach(function(pattern) {
-            var regex = new RegExp(pattern);
-            if (regex.test(currentUrl)) {
-                var buttonIds = urlButtonMappings[pattern];
-                buttonIds.forEach(function(buttonId) {
-                    console.log('Trying button id: ' + buttonId);
-                    var button = document.getElementById(buttonId);
-                    if (button) {
-                        console.log('Found and clicked button id: ' + buttonId);
-                        button.click();
-                        buttonClicked = true;
-                    }
-                });
-            }
-        });
+        var regex = null;
+        var button = null;
 
-        if (!buttonClicked) {
-            console.log("No button found, trying again in 1 second...");
-            setTimeout(tryClickButtons, 1000); // Wait for 1 second before trying again
+        regex = new RegExp("https://device.sso..*.amazonaws.com/.*");
+        if (regex.test(currentUrl)) {
+            button = document.getElementById('cli_verification_btn');
+            if (handleButton(button)) {
+                return;
+            }
         }
+
+        regex = new RegExp("https://d-.*.awsapps.com/start/.*");
+        if (regex.test(currentUrl)) {
+            button = document.getElementById('cli_login_button');
+            if (handleButton(button)) {
+                return;
+            }
+        }
+
+        console.log("No button found, trying again in 1 second...");
+        setTimeout(tryClickButtons, 1000); // Wait for 1 second before trying again
     }
 
     window.addEventListener('load', tryClickButtons);
