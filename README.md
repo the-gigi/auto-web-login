@@ -54,8 +54,7 @@ Successfully logged into Start URL: https://d-1234567890.awsapps.com/start/
 ```
 
 The entire ordeal probably took less that a minute, but it takes me out of my flow, which I really
-dislike.
-When it happens every few hours day in and day out, it gets super annoying.
+dislike. When it happens every few hours day in and day out, it gets super annoying.
 
 ## 💡 The Solution
 
@@ -77,27 +76,24 @@ Alright let's make it happen...
 Go to [Tampermonkey.net](https://www.tampermonkey.net/) and follow the instructions to install the
 browser extension.
 
-### Step 2: Install the auto_aws_sso_login.js script 📜
+### Step 2: Install the auto_web_login.js script 📜
 
 With Tampermonkey installed, adding the auto-aws-sso-login script is a breeze:
 
-- Copy the [auto_aws_sso_login.js](auto_aws_sso_login.js) user script
+- Copy the [auto_web_login.js](auto_web_login.js) user script
 - Click on the Tampermonkey icon in your browser, and select “Create a new script...”
 - Delete any content in the new script template.
-- Paste the copied auto-aws-sso-login script.
+- Paste the copy auto-web-login script.
 - Feel free to make any modifications you like
 - Save the script by clicking File > Save or pressing Cmd/Ctrl + S.
 - Voilà! You're all set.
 
 Step 3: Let's close that last tab 🍏
 
-Guess what? modern paranoid browsers won't let a script close a window/tab it didn't open. Boooooo
-👎
-How lame is that? I guess like 8/10? oh, it was a rhetorical question... never mind...
+Guess what? modern paranoid browsers won't let a script close a window/tab it didn't open. Boooo 👎
 
 Just kidding 🤡. If malicious scripts could close windows and tabs left and right (see what I did
-there?) it could
-wreak havoc on the user experience.
+there?) it could wreak havoc on the user experience.
 
 Anyway, if we can't close the tab from inside the browser, let's close it from outside the browser.
 I'm on a Mac, so I'll use AppleScript. This will require executing some Javascript against Chrome

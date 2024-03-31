@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         auto-web-login
 // @namespace    http://tampermonkey.net/
-// @version      2024-03-24
+// @version      2024-03-31
 // @description  Automatically click the buttons when doing aws sso login
 // @author       the.gigi@gmail.com
 // @grant        none
@@ -23,7 +23,14 @@
         attempt++;
         console.log("Attempt:", attempt);
 
-        var urlButtonMappings = {"https://device.sso.*.amazonaws.com/*": "cli_verification_btn", "https://d-*.awsapps.com/start/*": "cli_login_button"};
+        var urlButtonMappings = {
+            "https://device.sso..*.amazonaws.com/.*": [
+                        "cli_verification_btn"
+            ],
+            "https://d-.*.awsapps.com/start/.*": [
+                        "cli_login_button"
+            ]
+        };
         var currentUrl = window.location.href;
 
         var buttonClicked = false;

@@ -18,7 +18,11 @@ def generate_tampermonkey_script():
 
     # Generate the @include lines and URL-to-buttons mapping for the script
     includes = "\n".join([f"// @include      {pattern}" for pattern in url_buttons_dict])
-    mappings = json.dumps(url_buttons_dict)
+    mappings = json.dumps(url_buttons_dict, indent=12)
+    # convert * wildcards to .* for regex
+    mappings = mappings.replace("*", ".*")
+    # adjust the indent on the last curly brace
+    mappings = mappings[:-1] + ' ' * 8 + '}'
 
     script = f"""// ==UserScript==
 // @name         auto-web-login
