@@ -117,10 +117,11 @@ $ osacompile -o CloseTabs.scpt CloseTabs.applescript
 Alright. we got ou compiled script, and we have
 Launched [auto_web_login.plist](auto_web_login.plist) file.
 All we need to bring this masterpiece to a glorious end is to drop the file
-into `~/Library/LaunchAgents`
+into `~/Library/LaunchAgents` and load it
 
 ```
 $ cp auto_web_login.plist ~/Library/LaunchAgents
+$ launchctl load ~/Library/LaunchAgents/auto_web_login.plist
 ```
 
 The End! Or is it?
@@ -147,7 +148,8 @@ program we can create an alias with the super friendly:
 name `alias sptnaa='ensure-aws-sso; some-program-that-needs-aws-access'`.
 
 From now on when you want to run `some-program-that-needs-aws-access` you type the much shorter and
-easy to remember `sptnaa` and you can rest assured that the program will start only once you're logged in to AWS
+easy to remember `sptnaa` and you can rest assured that the program will start only once you're
+logged in to AWS
 weather or not you were logged in to AWS before.
 
 The Real End! 🎉
