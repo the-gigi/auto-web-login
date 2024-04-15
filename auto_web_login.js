@@ -7,6 +7,7 @@
 // @grant        none
 // @include      https://device.sso.*.amazonaws.com/*
 // @include      https://d-*.awsapps.com/start/*
+// @include      https://invisible-platforms.onelogin.com/login2*
 // ==/UserScript==
 
 (function() {
@@ -47,6 +48,14 @@
         regex = new RegExp("https://d-.*.awsapps.com/start/.*");
         if (regex.test(currentUrl)) {
             button = document.getElementById('cli_login_button');
+            if (handleButton(button)) {
+                return;
+            }
+        }
+
+        regex = new RegExp("https://invisible-platforms.onelogin.com/login2.*");
+        if (regex.test(currentUrl)) {
+            button = document.querySelector('button[type="submit"]');
             if (handleButton(button)) {
                 return;
             }

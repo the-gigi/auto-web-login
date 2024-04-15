@@ -1,4 +1,4 @@
-## auto-aws-sso-login
+## auto-web-login
 
 Every AWS SSO user knows the drill - you diligently go through your day trying to your best to
 increase
@@ -147,3 +147,45 @@ logged in to AWS
 weather or not you were logged in to AWS before.
 
 The Real End! 🎉.
+
+## Project Setup
+
+This project uses Python 3. Follow the steps below to set up your development environment.
+
+### Prerequisites
+
+- Python 3.6 or higher
+
+### Setting Up a Virtual Environment
+
+1. **Create and activate the virtual environment:**
+
+    ```bash
+    # Create virtual environment
+    python -m venv venv
+    source venv/bin/activate
+    ```
+
+2. **Install required packages:**
+
+    ```bash
+    pip install pyautogui sh
+    ```
+
+3. **Deactivate the virtual environment when done:**
+
+    ```bash
+    deactivate
+    ```
+
+### Running the Project
+
+Make sure the virtual environment is activated before running any Python scripts:
+
+```bash
+# Activate the virtual environment
+source venv/bin/activate
+
+# Run your script
+python auto_click.py
+```

@@ -1,2 +1,4 @@
 config.py
-CloseRequestAuthroizedTab.scpt
+CloseTabs.scpt
+__pycache__
+*.pyc
