@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>auto-aws-sso-login</string>
+    <string>auto-web-login - close tabs</string>
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/osascript</string>
-        <string>/Users/gigi/git/auto-aws-sso-login/CloseRequestAuthorizedTab.scpt</string>
+        <string>/Users/gigi/git/auto-aws-sso-login/CloseTabs.scpt</string>
     </array>
     <key>RunAtLoad</key>
     <true/>

@@ -37,7 +37,7 @@ another button to click.
 
 ![](images/page2.png)
 
-OK. You know the drill by now, and you obediently click the button. This brings the very cheerful 
+OK. You know the drill by now, and you obediently click the button. This brings the very cheerful
 "Request approved" page with a nice green check mark ✅.
 
 ![](images/request_approved.png)
@@ -60,8 +60,9 @@ SSO login workflow play out in front of you.
 The solution is an amalgam of several tools:
 
 - 🐒 A [Tampermonkey](https://www.tampermonkey.net/) user script clicks ze buttons for you!
+- 🐍 A python script to simulate interactive user clicks
 - 🍏 A little AppleScript to put an end to that last page.
-- 🚀 Launchd to make sure our AppleScript is always running.
+- 🚀 Launchd to make sure our AppleScript and Python are always running.
 
 Alright let's make it happen...
 
@@ -82,9 +83,40 @@ breeze:
 - Save the script by clicking File > Save or pressing Cmd/Ctrl + S.
 - Voilà! You're all set.
 
-Step 3: Let's close that last tab 🍏
+Step 3: Simulate interactive user click 🔘
 
-Guess what? modern paranoid browsers won't let a script close a window/tab it didn't open. Boooo 👎
+Some buttons are more stubborn than others. It turns out that forms with password fields can't be
+clicked from Javascript. Even if the password is populated by autoc-omplete.The browser's security
+apparatus requires user interaction. This comes up when the SSO provider itself (e.g. OneLogin)
+requires re-authorization.
+
+![](images/password_form.png)
+
+Alright. We'll have to click from outside the browser using some Python automation. No biggie.
+
+```
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install dependencies
+pip install sh pyautogui
+
+# Copy the launchd file for auto-startup
+cp auto_web_login_simulate_user.plist ~/Library/LaunchAgents
+
+# Immediately start the Python automation
+launchctl load ~/Library/LaunchAgents/auto_web_login_simulate_user.plist
+
+# Deactivate the virtual environment
+deactivate
+```
+
+Step 4: Let's close that last tab 🍏
+
+Guess what? modern paranoid browsers won't let a script close a window/tab it did not open. Boooo 👎
 
 Just kidding 🤡. If malicious scripts could close windows and tabs left and right (see what I did
 there?) it could wreak havoc on the user experience.
@@ -108,7 +140,7 @@ compile our AppleScript:
 $ osacompile -o CloseTabs.scpt CloseTabs.applescript
 ```
 
-Alright. we got ou compiled script, and we have
+Alright. we got our compiled script, and we have a
 Launched [auto_web_login.plist](auto_web_login.plist) file.
 All we need to bring this masterpiece to a glorious end is to drop the file
 into `~/Library/LaunchAgents` and load it
@@ -116,6 +148,14 @@ into `~/Library/LaunchAgents` and load it
 ```
 $ cp auto_web_login.plist ~/Library/LaunchAgents
 $ launchctl load ~/Library/LaunchAgents/auto_web_login.plist
+```
+
+If something is wrong with either the Python automation or the Applescript automation you can unload
+them using:
+
+```
+launchctl unload ~/Library/LaunchAgents/auto_web_login_close_tabs.plist
+launchctl unload ~/Library/LaunchAgents/auto_web_login_simulate_user.plist
 ```
 
 The End! Or is it?
@@ -147,45 +187,3 @@ logged in to AWS
 weather or not you were logged in to AWS before.
 
 The Real End! 🎉.
-
-## Project Setup
-
-This project uses Python 3. Follow the steps below to set up your development environment.
-
-### Prerequisites
-
-- Python 3.6 or higher
-
-### Setting Up a Virtual Environment
-
-1. **Create and activate the virtual environment:**
-
-    ```bash
-    # Create virtual environment
-    python -m venv venv
-    source venv/bin/activate
-    ```
-
-2. **Install required packages:**
-
-    ```bash
-    pip install pyautogui sh
-    ```
-
-3. **Deactivate the virtual environment when done:**
-
-    ```bash
-    deactivate
-    ```
-
-### Running the Project
-
-Make sure the virtual environment is activated before running any Python scripts:
-
-```bash
-# Activate the virtual environment
-source venv/bin/activate
-
-# Run your script
-python auto_click.py
-```

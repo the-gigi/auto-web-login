@@ -1,7 +1,9 @@
-# import pyautogui
+import time
+
 import pyautogui
 from pyautogui import Point
 import sh
+from config import user_click_dict
 
 
 def osascript(script):
@@ -98,44 +100,37 @@ def find_element_center(partial_url, query):
     res = osascript(cmd)
     # Parse the result, assuming it's a string of "x,y" or an error message
     if ',' not in res:
-        return None
+        return None, None
 
     x, y = res.split(',')
-    return (float(x.strip()), float(y.strip()))
+    return float(x.strip()), float(y.strip())
 
 
 def click_element(partial_url, query):
+    # Calculate the relative position of the element (viewport coordinate)
+    dx, dy = find_element_center(partial_url, query)
+    if dx is None:
+        return
+
     # Calculate the absolute position of the viewport
     x, y = get_chrome_origin()
     y = get_absolute_viewport_top()
-
-    # Calculate the relative position of the element (viewport coordinate)
-    dx, dy = find_element_center(partial_url, query)
 
     # Translate the element center to absolute coordinates
     x += dx
     y += dy
 
     # Move the mouse to the center of the element and click twice (in case need to get focus first)
-    pyautogui.moveTo(x, y, 2)
+    pyautogui.moveTo(x, y)
     pyautogui.click()
     pyautogui.click()
 
 
 def main():
-    browser_origin = get_chrome_origin()
-    print(f'Chrome x,y: {browser_origin}')
-
-    viewport_top = get_absolute_viewport_top()
-    print(f'Viewport top: {viewport_top}')
-
-    partial_url = 'https://invisible-platforms.onelogin.com/login2/'
-    query = "document.querySelector('button[type=\"submit\"]')"
-    # button_center = find_element_center(partial_url, query)
-    # if button_center is not None:
-    #     print(f'Submit button x,y: {button_center}')
-
-    click_element(partial_url, query)
+    while True:
+        for partial_url, query in user_click_dict.items():
+            click_element(partial_url, query)
+        time.sleep(3)
 
 
 if __name__ == '__main__':

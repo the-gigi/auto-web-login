@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>auto-web-login - simulate user</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/gigi/git/auto-web-login/venv/bin/python</string>
+        <string>/Users/gigi/git/auto-web-login/auto_click.py</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/tmp/auto-web-login.out</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/auto-web-login.err</string>
+</dict>
+</plist>
