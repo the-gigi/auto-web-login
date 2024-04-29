@@ -37,8 +37,13 @@ another button to click.
 
 ![](images/page2.png)
 
-OK. You know the drill by now, and you obediently click the button. This brings the very cheerful
-"Request approved" page with a nice green check mark ✅.
+You know the drill by now, and you obediently click the button. Disbelieving, you're mortified 💀 
+to discover you're not done yet. There is yet consent screen.
+
+![](images/page3.png)
+
+Finally, after you dejectedly grant access your data avery cheerful "Request approved" page pops up
+with a nice green check mark ✅.
 
 ![](images/request_approved.png)
 
@@ -94,6 +99,9 @@ requires re-authorization.
 
 Alright. We'll have to click from outside the browser using some Python automation. No biggie.
 
+
+Step 3.1: the Python auto-click
+
 ```
 # Create virtual environment
 python -m venv venv
@@ -113,6 +121,17 @@ launchctl load ~/Library/LaunchAgents/auto_web_login_simulate_user.plist
 # Deactivate the virtual environment
 deactivate
 ```
+
+Step 3.2: the Rust auto-click
+
+```
+mkdir -p ~/.auto-click
+
+ln -s config.yaml ~/.auto-click/config.yaml
+```
+
+
+
 
 Step 4: Let's close that last tab 🍏
 

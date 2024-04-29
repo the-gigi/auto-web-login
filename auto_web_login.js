@@ -1,13 +1,12 @@
 // ==UserScript==
 // @name         auto-web-login
 // @namespace    http://tampermonkey.net/
-// @version      2024-03-31
+// @version      2024-04-25
 // @description  Automatically click the buttons when doing aws sso login
 // @author       the.gigi@gmail.com
 // @grant        none
 // @include      https://device.sso.*.amazonaws.com/*
 // @include      https://d-*.awsapps.com/start/*
-// @include      https://invisible-platforms.onelogin.com/login2*
 // ==/UserScript==
 
 (function() {
@@ -51,11 +50,7 @@
             if (handleButton(button)) {
                 return;
             }
-        }
-
-        regex = new RegExp("https://invisible-platforms.onelogin.com/login2.*");
-        if (regex.test(currentUrl)) {
-            button = document.querySelector('button[type="submit"]');
+            button = document.querySelector('button[data-testid="allow-access-button"]');
             if (handleButton(button)) {
                 return;
             }

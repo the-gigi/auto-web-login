@@ -1,0 +1,5 @@
+clicks:
+  - url: "https://invisible-platforms.onelogin.com/login2/"
+    query:
+      "Array.from(document.querySelectorAll('span')).some(span => span.textContent.includes('Change Authentication Factor')) ? null : document.querySelector('button[type=\"submit\"]')"
+

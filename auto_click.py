@@ -24,12 +24,18 @@ def get_absolute_viewport_top():
     This function calculates the viewport top by executing JavaScript in Chrome via AppleScript.
     It determines the distance from the top of the screen to the inside top of the browser window.
 
+    It's very important to reset the zoom level to the default, otherwise the window.outerHeight
+    value is going to be incorrect.
+
     Returns:
         int: The absolute top position of the viewport.
     """
     cmd = """
         tell application "Google Chrome"
-            tell the active tab of window 1
+            tell application "System Events"
+                keystroke "0" using {command down}
+            end tell        
+            tell the active tab of window 1            
                 set js to "window.screenY + window.outerHeight - window.innerHeight"
                 set viewportTop to execute javascript js
                 return viewportTop
@@ -41,13 +47,13 @@ def get_absolute_viewport_top():
 
 
 def get_chrome_origin():
-    """Fetches the x,y position and size of top-left corner of the foremost Google Chrome window.
+    """Fetches the x,y position of top-left corner of the foremost Google Chrome window.
 
     This function uses AppleScript to interact with System Events to retrieve the position
     of the first window of Google Chrome in absolute screen coordinates.
 
     Returns:
-        list: A list containing four integers [x, y, width, height] that define the bounding rect
+        Point: the left, top coordinates of the Chrome browser window
     """
     cmd = """
         tell application "System Events" to tell process "Google Chrome"

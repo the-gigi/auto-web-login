@@ -1,5 +1,5 @@
 
-set urlQueryPairs to {{"awsapps.com/start/", "Array.from(document.querySelectorAll('div')).find(el => el.textContent === 'Request approved');"}}
+set urlQueryPairs to {{"https://invisible-platforms.onelogin.com/login2/", "document.querySelector('button[type="submit"]')"}}
 repeat
     tell application "Google Chrome"
         try

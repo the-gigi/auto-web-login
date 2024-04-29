@@ -4,3 +4,4 @@ CloseTabs.scpt
 __pycache__
 *.pyc
 venv
+.idea
