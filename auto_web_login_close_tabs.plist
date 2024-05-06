@@ -7,7 +7,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/osascript</string>
-        <string>/Users/gigi/git/auto-aws-sso-login/CloseTabs.scpt</string>
+        <string>/Users/gigi/git/auto-web-login/CloseTabs.scpt</string>
     </array>
     <key>RunAtLoad</key>
     <true/>

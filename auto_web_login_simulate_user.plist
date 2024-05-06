@@ -6,16 +6,10 @@
     <string>auto-web-login - simulate user</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/gigi/git/auto-web-login/venv/bin/python</string>
-        <string>/Users/gigi/git/auto-web-login/auto_click.py</string>
+        <string>/usr/local/bin/auto-click</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
-    <key>EnvironmentVariables</key>
-    <dict>
-        <key>PYTHONUNBUFFERED</key>
-        <string>1</string>
-    </dict>
     <key>StandardOutPath</key>
     <string>/tmp/auto-web-login.out</string>
     <key>StandardErrorPath</key>

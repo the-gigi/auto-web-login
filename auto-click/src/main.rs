@@ -123,7 +123,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     loop {
         for click in &user_click_dict {
             if let Ok((dx, dy)) = find_element_center(&click.url, &click.query) {
-                if let Ok((x, y)) = get_chrome_origin() {
+                if let Ok((x, _y)) = get_chrome_origin() {
                     let viewport_top = get_absolute_viewport_top()?;
                     let abs_x = x as f64 + dx;
                     let abs_y = viewport_top as f64 + dy;

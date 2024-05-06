@@ -37,7 +37,7 @@ another button to click.
 
 ![](images/page2.png)
 
-You know the drill by now, and you obediently click the button. Disbelieving, you're mortified 💀 
+You know the drill by now, and you obediently click the button. Disbelieving, you're mortified 💀
 to discover you're not done yet. There is yet consent screen.
 
 ![](images/page3.png)
@@ -65,11 +65,44 @@ SSO login workflow play out in front of you.
 The solution is an amalgam of several tools:
 
 - 🐒 A [Tampermonkey](https://www.tampermonkey.net/) user script clicks ze buttons for you!
-- 🐍 A python script to simulate interactive user clicks
+- 🤖 A Rust program script to simulate interactive user clicks.
 - 🍏 A little AppleScript to put an end to that last page.
-- 🚀 Launchd to make sure our AppleScript and Python are always running.
+- 🐍 Some Python to generate the aforementioned scripts from a config file. 
+- 🚀 Launchd to make sure our AppleScript and Rust program are always running.
 
 Alright let's make it happen...
+
+### Step 0: Generate the scripts 🐍
+
+First, lets set up the Python environment (this is a one time initialization)
+
+```
+# Create virtual environment
+$ python -m venv venv
+
+# Activate virtual environment
+# source venv/bin/activate
+
+# Install dependencies
+$ pip install sh pyautogui
+```
+
+Copy sample_config.py to config.py and edit config.py for your environment.
+
+```
+$ cp sample_Config.py config.py 
+```
+
+Then generate the scripts:
+
+```
+$ python generate_scripts.py
+```
+
+You can deactivate the virtual environment now:
+```
+$ deactivate
+```
 
 ### Step 1: Install Tampermonkey 🐒
 
@@ -99,39 +132,27 @@ requires re-authorization.
 
 Alright. We'll have to click from outside the browser using some Python automation. No biggie.
 
+Step 3: the Rust auto-click program 🤖
 
-Step 3.1: the Python auto-click
-
-```
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-source venv/bin/activate
-
-# Install dependencies
-pip install sh pyautogui
-
-# Copy the launchd file for auto-startup
-cp auto_web_login_simulate_user.plist ~/Library/LaunchAgents
-
-# Immediately start the Python automation
-launchctl load ~/Library/LaunchAgents/auto_web_login_simulate_user.plist
-
-# Deactivate the virtual environment
-deactivate
-```
-
-Step 3.2: the Rust auto-click
+First, let's make our config file available in a dedicated directory
 
 ```
-mkdir -p ~/.auto-click
+# Change directory to the auto-click project directory
+$ cd auto-click
 
-ln -s config.yaml ~/.auto-click/config.yaml
+# Create a directory .auto-click in the user's home directory if it doesn't already exist
+$ mkdir -p ~/.auto-click
+
+# Create a symbolic link for config.yaml in the newly created .auto-click directory
+$ ln -s config.yaml ~/.auto-click/config.yaml
 ```
 
+Next, let's build a release version of the auto-click program and copy it to the path
 
-
+```
+$ cargo build --release
+$ sudo mv target/release/auto-click /usr/local/bin
+```
 
 Step 4: Let's close that last tab 🍏
 
@@ -160,21 +181,21 @@ $ osacompile -o CloseTabs.scpt CloseTabs.applescript
 ```
 
 Alright. we got our compiled script, and we have a
-Launched [auto_web_login.plist](auto_web_login.plist) file.
-All we need to bring this masterpiece to a glorious end is to drop the file
-into `~/Library/LaunchAgents` and load it
+Launched [auto_web_login_simulate_user.plist](auto_web_login_simulate_user.plist) file. All we need
+to bring this masterpiece to a glorious end is to drop the file into `~/Library/LaunchAgents` and
+load it.
 
 ```
-$ cp auto_web_login.plist ~/Library/LaunchAgents
-$ launchctl load ~/Library/LaunchAgents/auto_web_login.plist
+$ cp auto_web_login_simulate_user.plist ~/Library/LaunchAgents
+$ launchctl load ~/Library/LaunchAgents/auto_web_login_simulate_user.plist
 ```
 
-If something is wrong with either the Python automation or the Applescript automation you can unload
+If something is wrong with either the Rust automation or the Applescript automation you can unload
 them using:
 
 ```
-launchctl unload ~/Library/LaunchAgents/auto_web_login_close_tabs.plist
-launchctl unload ~/Library/LaunchAgents/auto_web_login_simulate_user.plist
+$ launchctl unload ~/Library/LaunchAgents/auto_web_login_close_tabs.plist
+$ launchctl unload ~/Library/LaunchAgents/auto_web_login_simulate_user.plist
 ```
 
 The End! Or is it?
