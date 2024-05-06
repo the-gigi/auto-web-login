@@ -4,15 +4,6 @@ url_buttons_dict = {
     "https://d-*.awsapps.com/start/*": ["document.getElementById('cli_login_button')"],
 }
 
-# These buttons must be clicked by simulated user
-user_click_dict = {
-    "https://<your company>.onelogin.com/login2/":
-        """Array.from(document.querySelectorAll('span'))
-            .some(span => span.textContent.includes('Change Authentication Factor')) 
-                ? null 
-                : document.querySelector('button[type="submit"]')"""
-}
-
 # These tabs should be closed: key is a substring of url. value is a query that returns an element.
 url_query_dict = {
     "https://<your company>.onelogin.com/login2/": "document.querySelector('button[type=\"submit\"]')"

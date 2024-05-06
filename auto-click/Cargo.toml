@@ -9,4 +9,4 @@ edition = "2021"
 dirs = "5.0.1"
 enigo = "0.2.0"
 serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9.34+deprecated"
+serde_yaml = "0.9.34"
