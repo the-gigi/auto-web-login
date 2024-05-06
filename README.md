@@ -67,22 +67,43 @@ The solution is an amalgam of several tools:
 - 🐒 A [Tampermonkey](https://www.tampermonkey.net/) user script clicks ze buttons for you!
 - 🤖 A Rust program script to simulate interactive user clicks.
 - 🍏 A little AppleScript to put an end to that last page.
-- 🐍 Some Python to generate the aforementioned scripts from a config file. 
+- 🐍 Some Python to generate the aforementioned scripts from a config file.
 - 🚀 Launchd to make sure our AppleScript and Rust program are always running.
 
 Alright let's make it happen...
 
 ### Step 0: Generate the scripts 🐍
 
+First, lets set up the Python environment (this is a one time initialization)
+
+```
+# Create virtual environment
+$ python -m venv venv
+
+# Activate virtual environment
+# source venv/bin/activate
+
+# Install dependencies
+$ pip install sh
+```
+
 Copy sample_config.py to config.py and edit config.py for your environment.
 
-THen generate the scripts:
-
+```
+$ cp sample_config.py config.py 
 ```
 
+Then generate the scripts:
+
+```
+$ python generate_scripts.py
 ```
 
+You can deactivate the virtual environment now:
 
+```
+$ deactivate
+```
 
 ### Step 1: Install Tampermonkey 🐒
 
@@ -101,18 +122,16 @@ breeze:
 - Save the script by clicking File > Save or pressing Cmd/Ctrl + S.
 - Voilà! You're all set.
 
-Step 3: Simulate interactive user click 🔘
+### Step 3: Simulate interactive user click 🔘
 
 Some buttons are more stubborn than others. It turns out that forms with password fields can't be
-clicked from Javascript. Even if the password is populated by autoc-omplete.The browser's security
+clicked from Javascript. Even if the password is populated by auto-complete.The browser's security
 apparatus requires user interaction. This comes up when the SSO provider itself (e.g. OneLogin)
 requires re-authorization.
 
 ![](images/password_form.png)
 
-Alright. We'll have to click from outside the browser using some Python automation. No biggie.
-
-Step 3: the Rust auto-click program 🤖
+Alright. We'll have to click from outside the browser using some Rust automation. No biggie.
 
 First, let's make our config file available in a dedicated directory
 
@@ -132,6 +151,14 @@ Next, let's build a release version of the auto-click program and copy it to the
 ```
 $ cargo build --release
 $ sudo mv target/release/auto-click /usr/local/bin
+```
+
+Finally, we need to make this run automatically on startup. THese commands will copy the Launchd
+file [auto_web_login_simulate_users.plist](auto_web_login_simulate_user.plist) to the right place.
+
+```
+$ cp auto_web_login_simulate_user.plist ~/Library/LaunchAgents
+$ launchctl load ~/Library/LaunchAgents/auto_web_login_simulate_user.plist
 ```
 
 Step 4: Let's close that last tab 🍏
@@ -161,13 +188,13 @@ $ osacompile -o CloseTabs.scpt CloseTabs.applescript
 ```
 
 Alright. we got our compiled script, and we have a
-Launched [auto_web_login_simulate_user.plist](auto_web_login_simulate_user.plist) file. All we need
+Launched [auto_web_login_close_tabs.plist](auto_web_login_close_tabs.plist) file. All we need
 to bring this masterpiece to a glorious end is to drop the file into `~/Library/LaunchAgents` and
 load it.
 
 ```
-$ cp auto_web_login_simulate_user.plist ~/Library/LaunchAgents
-$ launchctl load ~/Library/LaunchAgents/auto_web_login_simulate_user.plist
+$ cp auto_web_login_close_tabs.plist ~/Library/LaunchAgents
+$ launchctl load ~/Library/LaunchAgents/auto_web_login_close_tabs.plist
 ```
 
 If something is wrong with either the Rust automation or the Applescript automation you can unload

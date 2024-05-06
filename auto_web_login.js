@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         auto-web-login
 // @namespace    http://tampermonkey.net/
-// @version      2024-04-25
+// @version      2024-05-05
 // @description  Automatically click the buttons when doing aws sso login
 // @author       the.gigi@gmail.com
 // @grant        none

@@ -1,6 +1,6 @@
 activate
 config.py
-CloseTabs.scpt
+*.scpt
 __pycache__
 *.pyc
 venv
