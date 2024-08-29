@@ -5,6 +5,7 @@
 from datetime import datetime
 from typing import Mapping
 
+import config
 from config import (
     url_buttons_dict,
     url_query_dict
@@ -67,17 +68,17 @@ def generate_pattern_handling_code(pattern, queries):
     }}
 
     """
-
-    buttons = "\n".join(generate_button_handling_code(query) for query in queries)
+    indent = "        "
+    buttons = [generate_button_handling_code(query) for query in queries]
+    buttons = "\n".join(indent + b.lstrip() for b in buttons)
     return f"""
     regex = new RegExp("{pattern}");
-    if (regex.test(currentUrl)) {{
-        {buttons.lstrip()}
+    if (regex.test(currentUrl)) {{\n{buttons}    
     }}    
     """
 
 
-def generate_button_handling_code(query):
+def generate_button_handling_code(query, return_after_click=True):
     """
     The format of a pattern handling code is:
 
@@ -93,12 +94,22 @@ def generate_button_handling_code(query):
         return;
     }}
     """
-    return f"""
-        button = {query};
-        if (handleButton(button)) {{
+    if return_after_click:
+        action = """
+        if (await handleButton(button)) {
             return;
-        }}
-    """[1:].rstrip()
+        }
+        """
+    else:
+        action = """
+        await handleButton(button);
+        """
+
+    code = f"""
+        button = {query};
+        {action.lstrip()}
+        """
+    return code[1:].rstrip()
 
 
 def generate_tampermonkey_script():
@@ -110,7 +121,7 @@ def generate_tampermonkey_script():
     generated_code = generate_all_pattern_handling_code(url_buttons_dict)
     # Indent 4 more spaces
     generated_code = generated_code.replace("\n", "\n    ").rstrip()
-
+    delay_ms = int(config.delay_seconds * 1000)
     script = f"""// ==UserScript==
 // @name         auto-web-login
 // @namespace    http://tampermonkey.net/
@@ -127,16 +138,21 @@ def generate_tampermonkey_script():
     var maxAttempts = 5;
     var attempt = 0;
 
-    function handleButton(button) {{
+    function sleep(ms) {{
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }}    
+    
+    async function handleButton(button) {{
         if (!button) {{
             return false;
         }}
         console.log('Found and clicked button');
+        await sleep({delay_ms});
         button.click();
         return true;
     }}
 
-    function tryClickButtons() {{
+    async function tryClickButtons() {{
         if (attempt >= maxAttempts) {{
             console.log("Max attempts reached. Stopping.");
             return;
@@ -154,7 +170,13 @@ def generate_tampermonkey_script():
         setTimeout(tryClickButtons, 1000); // Wait for 1 second before trying again        
     }}
 
-    window.addEventListener('load', tryClickButtons);
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {{
+        // If the document is already loaded or nearly loaded, call the function immediately
+        tryClickButtons();
+    }} else {{
+        // Otherwise, wait for the load event
+        window.addEventListener('load', tryClickButtons);
+    }}
 }})();
 """
     lines = script.split("\n")
