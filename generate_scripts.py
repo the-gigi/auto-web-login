@@ -135,7 +135,7 @@ def generate_tampermonkey_script():
 (function() {{
     'use strict';
 
-    var maxAttempts = 5;
+    var maxAttempts = 20;
     var attempt = 0;
 
     function sleep(ms) {{
