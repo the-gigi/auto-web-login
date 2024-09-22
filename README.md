@@ -1,8 +1,8 @@
 ## auto-web-login
 
 Every AWS SSO user knows the drill - you diligently go through your day trying to your best to
-increase
-shareholders value in your terminal, and suddenly out of the blue you get an uplifting message like:
+increase the shareholders' value in your terminal, and suddenly out of the blue you get an uplifting
+message like:
 
 ```
 SSOProviderInvalidToken: the SSO session has expired or is invalid
@@ -12,7 +12,7 @@ no such file or directory
 
 😱 Ahhhhhhh! What's going on?
 
-Well, if you're an old hand at this game you know that your AWS SSO session has expired and you
+Well, if you're an old hand at this game you know that your AWS SSO session has expired, and you
 just have to type:
 
 ```
@@ -30,24 +30,25 @@ displayed in your terminal, then switch back to the browser and click the button
 
 ![](images/terminal_message.png)
 
-I have a very high confidence that after doing that once ot twice, at least 100% of the people just
+I have a very high confidence that after doing that once or twice, at least 100% of the people just
 click the button without taking a second look at the code in their terminal. Clicking the button
-just brings more misery in the form of another page (which takes a few seconds to load) and yet
+just brings more misery in the form of yet another page (which takes a few seconds to load) and yet
 another button to click.
 
 ![](images/page2.png)
 
 You know the drill by now, and you obediently click the button. Disbelieving, you're mortified 💀
-to discover you're not done yet. There is yet consent screen.
+to discover you're not done yet. There is also a consent screen.
 
 ![](images/page3.png)
 
-Finally, after you dejectedly grant access your data avery cheerful "Request approved" page pops up
+Finally, after you dejectedly grant access your data a very cheerful "Request approved" page pops up
 with a nice green check mark ✅.
 
 ![](images/request_approved.png)
 
-You may now switch back to your terminal and keep working. It will even display a nice message like:
+You may now close the browser tab (yes, another click or ctrl+w) switch back to your terminal and
+keep working. It will even display a nice message like:
 
 ```
 Successfully logged into Start URL: https://d-1234567890.awsapps.com/start/
@@ -65,9 +66,9 @@ SSO login workflow play out in front of you.
 The solution is an amalgam of several tools:
 
 - 🐒 A [Tampermonkey](https://www.tampermonkey.net/) user script clicks ze buttons for you!
-- 🤖 A Rust program script to simulate interactive user clicks.
-- 🍏 A little AppleScript to put an end to that last page.
-- 🐍 Some Python to generate the aforementioned scripts from a config file.
+- 🤖 A [Rust](https://www.rust-lang.org) program to emulate interactive user clicks.
+- 🍏 A little [AppleScript](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/introduction/ASLR_intro.html) to put an end to that last page.
+- 🐍 Some [Python](https://www.python.org) to generate the aforementioned scripts from a config file.
 - 🚀 Launchd to make sure our AppleScript and Rust program are always running.
 
 Alright let's make it happen...
@@ -122,7 +123,7 @@ breeze:
 - Save the script by clicking File > Save or pressing Cmd/Ctrl + S.
 - Voilà! You're all set.
 
-### Step 3: Simulate interactive user click 🔘
+### Step 3: Emulate interactive user clicks 🔘
 
 Some buttons are more stubborn than others. It turns out that forms with password fields can't be
 clicked from Javascript. Even if the password is populated by auto-complete.The browser's security
@@ -153,7 +154,7 @@ $ cargo build --release
 $ sudo mv target/release/auto-click /usr/local/bin
 ```
 
-Finally, we need to make this run automatically on startup. THese commands will copy the Launchd
+Finally, we need to make this run automatically on startup. These commands will copy the Launchd
 file [auto_web_login_simulate_users.plist](auto_web_login_simulate_user.plist) to the right place.
 
 ```
@@ -230,7 +231,6 @@ name `alias sptnaa='ensure-aws-sso; some-program-that-needs-aws-access'`.
 
 From now on when you want to run `some-program-that-needs-aws-access` you type the much shorter and
 easy to remember `sptnaa` and you can rest assured that the program will start only once you're
-logged in to AWS
-weather or not you were logged in to AWS before.
+logged in to AWS weather or not you were logged in to AWS before.
 
 The Real End! 🎉.

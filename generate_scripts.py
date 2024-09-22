@@ -1,5 +1,7 @@
-""""Python script to generate a Tampermonkey script from a given configuration
+"""Python program to generate the following script:
 
+ - a Tampermonkey script from a given configuration
+ - Applescript to close tabs.
 
 """
 from datetime import datetime
@@ -13,103 +15,61 @@ from config import (
 
 
 def generate_all_pattern_handling_code(mapping: Mapping):
+    r"""Generate the configuration code for regex and button-finding logic as a config object.
+
+    The format should look like this:
+    const config = [
+        {
+            regex: /https:\/\/device\.sso\.*\.amazonaws\.com\/.*/,
+            findButton: () => document.getElementById('cli_verification_btn')
+        },
+        {
+            regex: /https:\/\/d-.*\.awsapps\.com\/start\/.*/,
+            findButton: () => document.getElementById('cli_login_button') ||
+                              document.querySelector('button[data-testid="allow-access-button"]')
+        },
+        ...
+    ];
     """
-    The format of all pattern handling code is:
-
-    <pattern handling code>
-    <pattern handling code>
-    ...
-    <pattern handling code>
-
-    Need to change wildcard form the mapping (*) to regex wildcard (.*)
-
-    Example:
-
-    regex = new RegExp("https://device.sso..*.amazonaws.com/.*");
-    if (regex.test(currentUrl)) {
-        button = document.getElementById("cli_verification_btn");
-        if (handleButton(button)) {
-            return;
-        }
-    }
-
-    regex = new RegExp("https://d-.*.awsapps.com/start/.*");
-    if (regex.test(currentUrl)) {
-        button = document.getElementById("cli_login_button");
-        if (handleButton(button)) {
-            return;
-        }
-    }
-    """
-    return "".join(generate_pattern_handling_code(p.replace("*", ".*"), q)
+    return "".join(generate_config_entry(
+        p.replace("/", r"\/").replace(".", r"\.").replace("*", ".*"), q)
                    for p, q in mapping.items()).lstrip()
 
 
-def generate_pattern_handling_code(pattern, queries):
-    """
-    The format of a pattern handling code is:
+def generate_config_entry(pattern, queries):
+    r"""Generate a single entry of the config object for the specified pattern and queries.
 
-    regex = new RegExp("<pattern>");
-    if (regex.test(currentUrl)) {{
-        <button handling code>
-        <button handling code>
-        ...
-        <button handling code>
-    }}
+    The format of a config entry is:
+    {
+        regex: /<pattern>/,
+        findButton: () => <button finding logic>
+    }
 
     Example:
-
-    regex = new RegExp("https://device.sso..*.amazonaws.com/.*");
-    if (regex.test(currentUrl)) {{
-        button = document.getElementById("cli_verification_btn");
-        if (handleButton(button)) {{
-            return;
-        }}
-    }}
-
+    {
+        regex: /https:\/\/device\.sso\.*\.amazonaws\.com\/.*/,
+        findButton: () => document.getElementById('cli_verification_btn')
+    }
     """
-    indent = "        "
-    buttons = [generate_button_handling_code(query) for query in queries]
-    buttons = "\n".join(indent + b.lstrip() for b in buttons)
+    buttons = " ||\n".join(generate_button_finding_logic(query) for query in queries)
     return f"""
-    regex = new RegExp("{pattern}");
-    if (regex.test(currentUrl)) {{\n{buttons}    
-    }}    
+        {{
+            regex: /{pattern}/,
+            findButton: () => {buttons}
+        }},
     """
 
 
-def generate_button_handling_code(query, return_after_click=True):
+def generate_button_finding_logic(query):
     """
-    The format of a pattern handling code is:
-
-    button = <query>;
-    if (handleButton(button)) {{
-        return;
-    }}
+    Generates the button finding logic for the findButton function in the config object.
 
     Example:
+        document.getElementById('cli_verification_btn')
 
-    button = document.getElementById("cli_verification_btn");
-    if (handleButton(button)) {{
-        return;
-    }}
+    In cases where multiple queries are provided, they will be combined with '||' to check multiple button conditions.
     """
-    if return_after_click:
-        action = """
-        if (await handleButton(button)) {
-            return;
-        }
-        """
-    else:
-        action = """
-        await handleButton(button);
-        """
-
-    code = f"""
-        button = {query};
-        {action.lstrip()}
-        """
-    return code[1:].rstrip()
+    return query.lstrip().rstrip()
 
 
 def generate_tampermonkey_script():
@@ -122,11 +82,13 @@ def generate_tampermonkey_script():
     # Indent 4 more spaces
     generated_code = generated_code.replace("\n", "\n    ").rstrip()
     delay_ms = int(config.delay_seconds * 1000)
+
+    # Generate the script with config-based pattern handling
     script = f"""// ==UserScript==
 // @name         auto-web-login
 // @namespace    http://tampermonkey.net/
 // @version      {today}
-// @description  Automatically click the buttons when doing aws sso login
+// @description  Automatically click the buttons when doing web login
 // @author       the.gigi@gmail.com
 // @grant        none
 {includes}
@@ -141,7 +103,7 @@ def generate_tampermonkey_script():
     function sleep(ms) {{
         return new Promise(resolve => setTimeout(resolve, ms));
     }}    
-    
+
     async function handleButton(button) {{
         if (!button) {{
             return false;
@@ -152,6 +114,9 @@ def generate_tampermonkey_script():
         return true;
     }}
 
+    const config = [{generated_code}
+    ];
+
     async function tryClickButtons() {{
         if (attempt >= maxAttempts) {{
             console.log("Max attempts reached. Stopping.");
@@ -160,12 +125,16 @@ def generate_tampermonkey_script():
         attempt++;
         console.log("Attempt:", attempt);
         var currentUrl = window.location.href;
-        var buttonClicked = false;
-        var regex = null;
-        var button = null;
-        
-        {generated_code} 
-               
+
+        for (const {{ regex, findButton }} of config) {{
+            if (regex.test(currentUrl)) {{
+                const button = findButton();
+                if (await handleButton(button)) {{
+                    return;
+                }}
+            }}
+        }}
+
         console.log("No button found, trying again in 1 second...");
         setTimeout(tryClickButtons, 1000); // Wait for 1 second before trying again        
     }}
