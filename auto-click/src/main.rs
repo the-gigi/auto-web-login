@@ -45,6 +45,20 @@ fn osascript(script: &str) -> Result<String, Box<dyn std::error::Error>> {
     }
 }
 
+fn get_chrome_origin() -> Result<(i32, i32), Box<dyn std::error::Error>> {
+    let script = r#"
+        tell application "System Events" to tell process "Google Chrome"
+            set thePos to position of first window
+            return thePos
+        end tell
+    "#;
+    let res = osascript(script)?;
+    let coords: Vec<i32> = res.split(',')
+        .map(|s| s.trim().parse().unwrap())
+        .collect();
+    Ok((coords[0], coords[1]))
+}
+
 fn get_absolute_viewport_top() -> Result<i32, Box<dyn std::error::Error>> {
     let script = r#"
         tell application "Google Chrome"
@@ -61,20 +75,6 @@ fn get_absolute_viewport_top() -> Result<i32, Box<dyn std::error::Error>> {
     "#;
     let res = osascript(script)?;
     res.trim().parse::<i32>().map_err(Into::into)
-}
-
-fn get_chrome_origin() -> Result<(i32, i32), Box<dyn std::error::Error>> {
-    let script = r#"
-        tell application "System Events" to tell process "Google Chrome"
-            set thePos to position of first window
-            return thePos
-        end tell
-    "#;
-    let res = osascript(script)?;
-    let coords: Vec<i32> = res.split(',')
-        .map(|s| s.trim().parse().unwrap())
-        .collect();
-    Ok((coords[0], coords[1]))
 }
 
 fn find_element_center(partial_url: &str, query: &str) -> Result<(f64, f64), Box<dyn std::error::Error>> {
@@ -116,8 +116,6 @@ fn find_element_center(partial_url: &str, query: &str) -> Result<(f64, f64), Box
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    //let chrome_origin = get_chrome_origin()?;
-    //println!("Chrome origin: ({}, {})", chrome_origin.0, chrome_origin.1);
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
     let user_click_dict = load_click_config()?;
     loop {

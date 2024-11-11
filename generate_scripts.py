@@ -14,7 +14,7 @@ from config import (
 )
 
 
-def generate_all_pattern_handling_code(mapping: Mapping):
+def generate_all_pattern_handling_config(mapping: Mapping):
     r"""Generate the configuration code for regex and button-finding logic as a config object.
 
     The format should look like this:
@@ -78,9 +78,9 @@ def generate_tampermonkey_script():
 
     # Generate the @include lines and URL-to-buttons mapping for the script
     includes = "\n".join([f"// @include      {pattern}" for pattern in url_buttons_dict])
-    generated_code = generate_all_pattern_handling_code(url_buttons_dict)
+    generated_config = generate_all_pattern_handling_config(url_buttons_dict)
     # Indent 4 more spaces
-    generated_code = generated_code.replace("\n", "\n    ").rstrip()
+    generated_config = generated_config.replace("\n", "\n    ").rstrip()
     delay_ms = int(config.delay_seconds * 1000)
 
     # Generate the script with config-based pattern handling
@@ -114,7 +114,7 @@ def generate_tampermonkey_script():
         return true;
     }}
 
-    const config = [{generated_code}
+    const config = [{generated_config}
     ];
 
     async function tryClickButtons() {{

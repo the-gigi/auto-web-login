@@ -126,7 +126,7 @@ breeze:
 ### Step 3: Emulate interactive user clicks 🔘
 
 Some buttons are more stubborn than others. It turns out that forms with password fields can't be
-clicked from Javascript. Even if the password is populated by auto-complete.The browser's security
+clicked from Javascript. Even if the password is populated by auto-complete! The browser's security
 apparatus requires user interaction. This comes up when the SSO provider itself (e.g. OneLogin)
 requires re-authorization.
 
