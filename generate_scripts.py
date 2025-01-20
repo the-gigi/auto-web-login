@@ -111,6 +111,9 @@ def generate_tampermonkey_script():
         console.log('Found and clicked button');
         await sleep({delay_ms});
         button.click();
+        // Wait and click again, as the first click sometimes doesn't work    
+        await sleep({delay_ms});
+        button.click();
         return true;
     }}
 
